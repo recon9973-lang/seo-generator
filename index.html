@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SEO Article Generator</title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="workspace">
+        <form class="input-panel" id="article-form">
+          <div class="brand-line">
+            <div>
+              <p class="eyebrow">Korean SEO Writer</p>
+              <h1>SEO 글 생성기</h1>
+            </div>
+            <span class="status-pill">OpenAI Ready</span>
+          </div>
+
+          <label class="field">
+            <span>핵심 키워드</span>
+            <input id="keyword" name="keyword" type="text" value="대구정형외과" placeholder="예: 대구정형외과">
+          </label>
+
+          <div class="two-column">
+            <label class="field">
+              <span>목표 글자수</span>
+              <input id="target-length" name="targetLength" type="number" min="1200" max="3500" step="100" value="2000">
+            </label>
+
+            <label class="field">
+              <span>문체</span>
+              <select id="tone" name="tone">
+                <option value="친절하고 전문적인">친절하고 전문적인</option>
+                <option value="정보성 중심의 담백한">정보성 중심의 담백한</option>
+                <option value="병원 블로그에 어울리는 신뢰감 있는">병원 블로그에 어울리는 신뢰감 있는</option>
+                <option value="소비자 관점의 쉬운">소비자 관점의 쉬운</option>
+              </select>
+            </label>
+          </div>
+
+          <details class="optional-box">
+            <summary>참고 URL 직접 추가</summary>
+            <label class="field">
+              <span>선택 입력</span>
+              <textarea id="source-urls" rows="4" placeholder="자동 검색에 추가로 반영할 URL이 있을 때만 한 줄에 하나씩 입력"></textarea>
+            </label>
+          </details>
+
+          <label class="field">
+            <span>수집한 원문 또는 메모</span>
+            <textarea id="source-text" rows="10" placeholder="선택 입력입니다. 꼭 반영할 메모나 원문 일부가 있을 때만 붙여넣으세요."></textarea>
+          </label>
+
+          <details class="api-box" open>
+            <summary>OpenAI API 사용 상태</summary>
+            <p id="api-status">서버를 실행하고 .env에 OPENAI_API_KEY를 넣으면 키워드만으로 자동 검색 후 글을 생성합니다. 키가 없거나 파일만 열면 로컬 생성으로 자동 전환됩니다.</p>
+          </details>
+
+          <div class="actions">
+            <button class="primary" type="submit">글 생성</button>
+            <button class="secondary" type="button" id="copy-button">복사</button>
+            <button class="secondary" type="button" id="download-button">Markdown 저장</button>
+          </div>
+        </form>
+
+        <section class="output-panel" aria-live="polite">
+          <div class="output-header">
+            <div>
+              <p class="eyebrow">Generated Draft</p>
+              <h2>생성 결과</h2>
+            </div>
+            <div class="metrics">
+              <span id="keyword-count">키워드 0회</span>
+              <span id="character-count">0자</span>
+            </div>
+          </div>
+          <article id="result" class="result empty-state">
+            <h3>키워드를 입력하고 글 생성을 눌러주세요.</h3>
+            <p>제목 후보, 디스크립션, 목차, 본문, FAQ, 해시태그가 이곳에 표시됩니다.</p>
+          </article>
+        </section>
+      </section>
+    </main>
+
+    <script type="module" src="./src/app.js"></script>
+  </body>
+</html>
