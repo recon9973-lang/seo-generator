@@ -1,4 +1,4 @@
-import { articleToMarkdown } from './seoGenerator.js';
+import { articleToMarkdown, generateSeoArticle } from './seoGenerator.js';
 import { buildApiRequestPayload, requestArticleDraft } from './apiConnectors.js';
 
 const form = document.querySelector('#article-form');
@@ -30,10 +30,19 @@ form.addEventListener('submit', async (event) => {
     setStatus('자동 검색 기반 글 생성 완료');
     renderArticle(article, apiResult.mode);
   } catch (error) {
-    latestMarkdown = '';
+    // 서버/API 키가 없거나 요청이 실패하면 로컬 템플릿 생성으로 자동 전환합니다.
     const message = error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.';
-    setStatus('자동 검색 생성 실패');
-    renderError(message);
+    try {
+      const article = generateSeoArticle(payload);
+      latestKeyword = article.keyword;
+      latestMarkdown = articleToMarkdown(article);
+      setStatus('로컬 생성으로 전환해 글을 만들었습니다');
+      renderArticle(article, 'local_fallback');
+    } catch (fallbackError) {
+      latestMarkdown = '';
+      setStatus('글 생성 실패');
+      renderError(fallbackError instanceof Error ? fallbackError.message : message);
+    }
   }
 });
 
@@ -73,7 +82,13 @@ function readFormPayload() {
 function renderArticle(article, mode) {
   result.classList.remove('empty-state');
   result.innerHTML = `
-    <p class="source-note">${mode === 'openai_web_search' ? 'OpenAI 자동 검색 결과를 반영했습니다.' : '생성 결과입니다.'}</p>
+    <p class="source-note">${
+      mode === 'openai_web_search'
+        ? 'OpenAI 자동 검색 결과를 반영했습니다.'
+        : mode === 'local_fallback'
+          ? '서버·API 키 없이 로컬 템플릿으로 생성한 결과입니다.'
+          : '생성 결과입니다.'
+    }</p>
 
     <h3>SEO 제목 후보</h3>
     <ol>${article.titleCandidates.map((title) => `<li>${escapeHtml(title)}</li>`).join('')}</ol>
